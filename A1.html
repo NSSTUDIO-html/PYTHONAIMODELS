@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D A1 Model</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff,1);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        // Orbit Controls (for interactive viewing)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Animate the controls for smoother transitions
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 1;
+        controls.maxDistance = 10;
+
+        // Camera positioning
+        camera.position.z = 3;
+
+        // GLTF Loader
+        const loader = new THREE.GLTFLoader();
+        const modelPath = '/storage/emulated/0/Download/Exo_Warrior_Sentinel_0411100310_texture.glb'; // Replace with the public URL of your model
+
+        loader.load(
+            modelPath,
+            function (gltf) {
+                scene.add(gltf.scene);
+                // Optionally adjust the model's position, scale, or rotation here
+                 gltf.scene.position.set(0, 0, 0);
+                gltf.scene.scale.set(1, 1, 1);
+            },
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            function (error) {
+                console.error('An error happened loading the model', error);
+            }
+        );
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // Required for OrbitControls to work
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resizing
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', onWindowResize, false);
+
+        animate();
+    </script>
+</body>
+</html>

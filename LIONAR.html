@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Meshy.ai Lion AR</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+      <!-- Marker (you can change to 'kanji' or use a custom marker) -->
+      <a-marker preset="hiro">
+        <a-entity id="lion-model" position="0 0 0" rotation="0 0 0" scale="1 1 1"></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      const modelUrl = '/storage/emulated/0/Download/Majestic_Stride_0410034742_texture.glb'; // Use a publicly accessible path or host it online
+
+      const loader = new THREE.GLTFLoader();
+      const modelEntity = document.querySelector('#lion-model');
+
+      loader.load(modelUrl, (gltf) => {
+        const model = gltf.scene;
+        model.scale.set(1, 1, 1.3);
+        model.traverse((node) => {
+          if (node.isMesh) node.castShadow = true;
+        });
+
+        modelEntity.object3D.add(model);
+      }, undefined, (error) => {
+        console.error('Failed to load model:', error);
+      });
+    </script>
+  </body>
+</html>
